@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HW1 — Grid World Policy Evaluation</title>
+    <meta name="description" content="Interactive Grid World with Iterative Policy Evaluation visualization" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ═══════════════════ RESET & BASE ═══════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #232735;
+            --border: #2e3346;
+            --text: #e4e6ed;
+            --text-dim: #8b90a0;
+            --accent: #6c63ff;
+            --accent-glow: rgba(108, 99, 255, .25);
+            --green: #2ecc71;
+            --green-bg: rgba(46, 204, 113, .15);
+            --red: #ff6b6b;
+            --red-bg: rgba(255, 107, 107, .12);
+            --gray: #555e70;
+            --gray-bg: rgba(85, 94, 112, .35);
+            --cell-bg: #1e2230;
+            --cell-hover: #272c3d;
+            --arrow-color: #c5cad6;
+            --toggle-bg: #2e3346;
+            --toggle-hover: #3a3f55;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, .35);
+        }
+
+        /* ═══════════ LIGHT THEME ═══════════ */
+        [data-theme="light"] {
+            --bg: #f0f2f7;
+            --surface: #ffffff;
+            --surface2: #f5f6fa;
+            --border: #dde1ea;
+            --text: #2c3e50;
+            --text-dim: #6b7280;
+            --accent: #6c63ff;
+            --accent-glow: rgba(108, 99, 255, .18);
+            --green: #27ae60;
+            --green-bg: rgba(46, 204, 113, .12);
+            --red: #e74c3c;
+            --red-bg: rgba(231, 76, 60, .10);
+            --gray: #95a5a6;
+            --gray-bg: rgba(149, 165, 166, .2);
+            --cell-bg: #f8f9fc;
+            --cell-hover: #eef0f5;
+            --arrow-color: #3a3f55;
+            --shadow: 0 4px 24px rgba(0, 0, 0, .08);
+            --toggle-bg: #e2e5ed;
+            --toggle-hover: #d0d4e0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 16px 48px;
+        }
+
+        /* ═══════════════════ HEADER ═══════════════════ */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c63ff, #48c6ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -.5px;
+        }
+
+        .header p {
+            font-size: .88rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--toggle-hover);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle svg {
+            color: var(--text-dim);
+            transition: color .2s;
+        }
+
+        .theme-toggle:hover svg {
+            color: var(--text);
+        }
+
+        [data-theme="dark"] .icon-sun {
+            display: none;
+        }
+
+        [data-theme="light"] .icon-moon {
+            display: none;
+        }
+
+        /* ═══════════════════ PANEL ═══════════════════ */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .panel label {
+            font-weight: 600;
+            font-size: .9rem;
+            color: var(--text-dim);
+        }
+
+        .panel select, .panel input[type="range"] {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface2);
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .panel select {
+            padding: 8px 14px;
+            font-size: .95rem;
+            cursor: pointer;
+        }
+
+        .panel select:focus {
+            border-color: var(--accent);
+        }
+
+        .range-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .range-wrapper span.clickable-val {
+            font-weight: bold;
+            color: var(--accent);
+            min-width: 48px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--surface2);
+            text-align: center;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .range-wrapper span.clickable-val:hover {
+            background: var(--border);
+        }
+        
+        .range-wrapper span.clickable-val:active {
+            transform: scale(0.95);
+        }
+
+        /* ═══════════ CUSTOM MODAL PROMPT ═══════════ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 320px;
+            box-shadow: var(--shadow);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .modal-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 8px;
+        }
+
+        /* buttons */
+        .btn {
+            padding: 9px 22px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .12s, box-shadow .18s, opacity .18s;
+            letter-spacing: .3px;
+        }
+
+        .btn:active {
+            transform: scale(.97);
+        }
+
+        .btn:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #6c63ff, #7f75ff);
+            color: #fff;
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .btn-accent:hover:not(:disabled) {
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(46, 204, 113, .25);
+        }
+
+        .btn-green:hover:not(:disabled) {
+            box-shadow: 0 4px 18px rgba(46, 204, 113, .35);
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(231, 76, 60, .2);
+        }
+
+        .btn-red:hover:not(:disabled) {
+            box-shadow: 0 4px 18px rgba(231, 76, 60, .3);
+        }
+
+        /* ═══════════════════ STATUS ═══════════════════ */
+        #statusBar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 28px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            font-size: .88rem;
+            text-align: center;
+            color: var(--text-dim);
+            min-width: 340px;
+            transition: all .25s;
+        }
+
+        .s-green {
+            color: var(--green) !important;
+            font-weight: 600;
+        }
+
+        .s-red {
+            color: var(--red) !important;
+            font-weight: 600;
+        }
+
+        .s-gray {
+            color: var(--gray) !important;
+            font-weight: 600;
+        }
+
+        .s-accent {
+            color: var(--accent) !important;
+            font-weight: 600;
+        }
+
+        /* ═══════════════════ LEGEND ═══════════════════ */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: .8rem;
+            color: var(--text-dim);
+        }
+
+        .lbox {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* ═══════════════════ GRIDS LAYOUT ═══════════════════ */
+        .grids-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .grid-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .grid-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 88px;
+            height: 88px;
+            border: 1.5px solid var(--border);
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            background: var(--cell-bg);
+            transition: background .15s, box-shadow .15s;
+            position: relative;
+        }
+
+        td:hover:not(.obstacle):not(.start):not(.end):not(.locked) {
+            background: var(--cell-hover);
+            box-shadow: inset 0 0 0 2px var(--accent);
+        }
+
+        /* cell types */
+        td.start {
+            background: var(--green-bg) !important;
+            box-shadow: inset 0 0 0 2.5px var(--green);
+            cursor: default;
+        }
+
+        td.end {
+            background: var(--red-bg) !important;
+            box-shadow: inset 0 0 0 2.5px var(--red);
+            cursor: default;
+        }
+
+        td.obstacle {
+            background: var(--gray-bg) !important;
+            cursor: default;
+        }
+
+        td.locked {
+            cursor: default;
+        }
+
+        /* inner content */
+        .cell-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 48px;
+        }
+
+        .cell-arrow svg {
+            display: block;
+        }
+
+        .cell-value {
+            font-size: .64rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            margin-top: 1px;
+            letter-spacing: .2px;
+        }
+
+        td.start .cell-value {
+            color: var(--green);
+        }
+
+        td.end .cell-value {
+            color: var(--red);
+        }
+
+        td.obstacle .cell-value {
+            color: transparent;
+        }
+
+        .cell-label {
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        td.start .cell-label {
+            color: var(--green);
+        }
+
+        td.end .cell-label {
+            color: var(--red);
+        }
+
+        td.obstacle .cell-label {
+            color: var(--text-dim);
+        }
+
+        /* ═══════════════════ SPINNER ═══════════════════ */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid rgba(255, 255, 255, .25);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ═══════════════════ RESPONSIVE ═══════════════════ */
+        @media (max-width: 600px) {
+            td {
+                width: 62px;
+                height: 62px;
+            }
+            .cell-arrow {
+                height: 34px;
+            }
+            .cell-value {
+                font-size: .55rem;
+            }
+            .panel {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+            .theme-toggle {
+                width: 34px;
+                height: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Grid World</h1>
+    </div>
+
+    <!-- Main Controls Panel -->
+    <div class="panel" id="controlPanel">
+        <label for="nSelect">Grid Size (n):</label>
+        <select id="nSelect">
+            <option value="5">5 × 5</option>
+            <option value="6">6 × 6</option>
+            <option value="7">7 × 7</option>
+            <option value="8">8 × 8</option>
+            <option value="9">9 × 9</option>
+        </select>
+        <button class="btn btn-accent" id="genBtn" onclick="generateGrid()">Generate Grid</button>
+        <button class="btn btn-green" id="evalBtn" disabled onclick="evaluatePolicy()">Evaluate Policy</button>
+        <button class="btn btn-red" id="resetBtn" onclick="resetGrid()">Reset</button>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark mode">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Risk & Reward Attributes Panel -->
+    <div class="panel" id="attributesPanel">
+        <label title="Probability of agent sliding into an alternate direction">
+            Noise/Slip Probability (Risk):
+            <div class="range-wrapper">
+                <input type="range" id="noiseRange" min="0" max="1.0" step="0.01" value="0.3" 
+                    oninput="document.getElementById('noiseVal').innerText=this.value; triggerReval();">
+                <span id="noiseVal" class="clickable-val" onclick="promptForValue('noise', CLIENT_LIMITS.NOISE_MIN, CLIENT_LIMITS.NOISE_MAX, 'Noise/Slip Probability')">0.3</span>
+            </div>
+        </label>
+        
+        <label title="How heavily future rewards are discounted">
+            Discount Factor (γ):
+            <div class="range-wrapper">
+                <input type="range" id="gammaRange" min="0.1" max="1.0" step="0.01" value="0.9" 
+                    oninput="document.getElementById('gammaVal').innerText=this.value; triggerReval();">
+                <span id="gammaVal" class="clickable-val" onclick="promptForValue('gamma', CLIENT_LIMITS.GAMMA_MIN, CLIENT_LIMITS.GAMMA_MAX, 'Discount Factor (γ)')">0.9</span>
+            </div>
+        </label>
+
+        <label title="Penalty for taking each step">
+            Step Cost:
+            <div class="range-wrapper">
+                <input type="range" id="costRange" min="-1.0" max="0.0" step="0.01" value="-0.04" 
+                    oninput="document.getElementById('costVal').innerText=this.value; triggerReval();">
+                <span id="costVal" class="clickable-val" onclick="promptForValue('cost', CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'Step Cost')">-0.04</span>
+            </div>
+        </label>
+    </div>
+
+    <!-- Status Bar -->
+    <div id="statusBar">Select a grid size and click <strong>Generate Grid</strong> to begin.</div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="lbox" style="background:var(--green-bg);box-shadow:inset 0 0 0 2px var(--green)"></div>
+            <span>Start</span>
+        </div>
+        <div class="legend-item">
+            <div class="lbox" style="background:var(--red-bg);box-shadow:inset 0 0 0 2px var(--red)"></div>
+            <span>End / Goal</span>
+        </div>
+        <div class="legend-item">
+            <div class="lbox" style="background:var(--gray-bg)"></div>
+            <span>Obstacle</span>
+        </div>
+        <div class="legend-item">
+            <div class="lbox" style="background:var(--cell-bg)"></div>
+            <span>Normal</span>
+        </div>
+    </div>
+
+    <!-- Custom Modal Prompt -->
+    <div class="modal-overlay" id="customPromptModal">
+        <div class="modal-content">
+            <div class="modal-title" id="promptTitle">Enter Value</div>
+            <div class="modal-desc" id="promptDesc"></div>
+            <input type="number" id="promptInput" class="modal-input" step="0.01" />
+            <div class="modal-actions">
+                <button class="btn btn-gray modal-btn" onclick="closePrompt()">Cancel</button>
+                <button class="btn btn-accent modal-btn" onclick="confirmPrompt()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grids Display Container -->
+    <div class="grids-container">
+        
+        <!-- Random Policy Grid -->
+        <div class="grid-section">
+            <h2>Random Policy</h2>
+            <div class="grid-wrap">
+                <table id="gridTableRand"></table>
+            </div>
+            <div style="margin-top: 15px;">
+                 <button class="btn btn-accent" id="reEvalRandBtn" disabled onclick="evaluatePolicy()">Re-Evaluate Policy</button>
+            </div>
+        </div>
+
+        <!-- Value Iteration Grid -->
+        <div class="grid-section">
+            <h2>Value Iteration (Optimal)</h2>
+            <div class="grid-wrap">
+                <table id="gridTableOpt"></table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ══════════════════════════════════════════════════════════ *
+         *  CLIENT-SIDE SECURITY LIMITS  (mirror server constants)
+         * ══════════════════════════════════════════════════════════ */
+        const CLIENT_LIMITS = Object.freeze({
+            N_MIN:         5,
+            N_MAX:         9,
+            NOISE_MIN:     0.0,
+            NOISE_MAX:     1.0,
+            GAMMA_MIN:     0.1,
+            GAMMA_MAX:     1.0,
+            STEP_COST_MIN: -1.0,
+            STEP_COST_MAX:  0.0,
+            MAX_OBSTACLES: 81,   // 9*9 absolute cap
+        });
+
+        /** Clamp a numeric value to [lo, hi] and verify it is finite. */
+        function safeFloat(raw, lo, hi, name) {
+            const v = parseFloat(raw);
+            if (!isFinite(v)) throw new RangeError(`${name} must be a finite number.`);
+            return Math.max(lo, Math.min(hi, v));
+        }
+
+        /** Clamp a numeric value to integer [lo, hi]. */
+        function safeInt(raw, lo, hi, name) {
+            const v = Math.trunc(Number(raw));
+            if (!isFinite(v)) throw new RangeError(`${name} must be a finite integer.`);
+            if (v < lo || v > hi) throw new RangeError(`${name} must be between ${lo} and ${hi}. Got ${v}.`);
+            return v;
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  STATE
+         * ══════════════════════════════════════════════════════════ */
+        let n = 5;
+        let mode = 'idle';        // idle | start | end | obstacle | done
+        let startCell = null;
+        let endCell = null;
+        let obstacles = [];
+        let obsCount = 0;
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  CUSTOM PROMPT MODAL
+         * ══════════════════════════════════════════════════════════ */
+        let promptTarget = null;
+        let promptMin = 0;
+        let promptMax = 0;
+
+        function promptForValue(idPrefix, min, max, name) {
+            promptTarget = idPrefix;
+            promptMin = min;
+            promptMax = max;
+            
+            const currentVal = document.getElementById(idPrefix + 'Val').innerText;
+            
+            document.getElementById('promptTitle').innerText = name;
+            document.getElementById('promptDesc').innerText = `Range: [${min} ~ ${max}]`;
+            document.getElementById('promptInput').value = currentVal;
+            
+            const modal = document.getElementById('customPromptModal');
+            modal.style.display = 'flex';
+            // Trigger reflow
+            void modal.offsetWidth;
+            modal.classList.add('active');
+            
+            document.getElementById('promptInput').focus();
+            document.getElementById('promptInput').select();
+        }
+
+        function closePrompt() {
+            const modal = document.getElementById('customPromptModal');
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function confirmPrompt() {
+            const res = document.getElementById('promptInput').value;
+            if (res !== null && res.trim() !== '') {
+                try {
+                    const parsed = parseFloat(res);
+                    if (!isFinite(parsed)) {
+                        alert(`Invalid input. Must be a valid number.`);
+                        return;
+                    }
+                    // clamp it for UI rendering, but still safeFloat will catch at evaluate time
+                    const val = Math.max(promptMin, Math.min(promptMax, parsed));
+                    
+                    document.getElementById(promptTarget + 'Range').value = val;
+                    document.getElementById(promptTarget + 'Val').innerText = val;
+                    triggerReval();
+                    closePrompt();
+                } catch (e) {
+                    alert('Error setting value.');
+                }
+            }
+        }
+
+        // Allow pressing Enter to confirm
+        document.getElementById('promptInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') confirmPrompt();
+            if (e.key === 'Escape') closePrompt();
+        });
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  THEME TOGGLE
+         * ══════════════════════════════════════════════════════════ */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('gridworld-theme', next);
+            // Re-render arrows if in done mode to update border colors
+            if (mode === 'done' && !document.getElementById('evalBtn').disabled && startCell) {
+                // minor visual refresh check
+            }
+        }
+
+        (function () {
+            const saved = localStorage.getItem('gridworld-theme');
+            if (saved) document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  SVG ARROW FACTORY
+         * ══════════════════════════════════════════════════════════ */
+        function buildArrowSVG(actions, cellIsStart) {
+            const size = 44;
+            const mid = size / 2;
+            const len = 14;
+            const head = 5;
+
+            const root = document.documentElement;
+            const style = getComputedStyle(root);
+            const stroke = cellIsStart ? style.getPropertyValue('--green').trim() : style.getPropertyValue('--arrow-color').trim();
+
+            let paths = '';
+
+            for (const a of actions) {
+                let x1, y1, x2, y2, hd = '';
+                if (a === 'up') {
+                    x1 = mid; y1 = mid + len; x2 = mid; y2 = mid - len;
+                    hd = `M${x2 - head},${y2 + head} L${x2},${y2} L${x2 + head},${y2 + head}`;
+                } else if (a === 'down') {
+                    x1 = mid; y1 = mid - len; x2 = mid; y2 = mid + len;
+                    hd = `M${x2 - head},${y2 - head} L${x2},${y2} L${x2 + head},${y2 - head}`;
+                } else if (a === 'left') {
+                    x1 = mid + len; y1 = mid; x2 = mid - len; y2 = mid;
+                    hd = `M${x2 + head},${y2 - head} L${x2},${y2} L${x2 + head},${y2 + head}`;
+                } else if (a === 'right') {
+                    x1 = mid - len; y1 = mid; x2 = mid + len; y2 = mid;
+                    hd = `M${x2 - head},${y2 - head} L${x2},${y2} L${x2 - head},${y2 + head}`;
+                }
+
+                paths += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/>`;
+                paths += `<path d="${hd}" fill="none" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+            }
+
+            return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  STATUS BAR
+         * ══════════════════════════════════════════════════════════ */
+        function updateStatus() {
+            const sb = document.getElementById('statusBar');
+            const max = n - 2;
+            const messages = {
+                idle: 'Select a grid size and click <strong>Generate Grid</strong> to begin.',
+                start: '<span class="s-green">Click a cell to set the <strong>Start</strong> position.</span>',
+                end: '<span class="s-red">Click a cell to set the <strong>End / Goal</strong> position.</span>',
+                obstacle: `<span class="s-gray">Click to place obstacles — <strong>${obsCount} / ${max}</strong> placed.</span>`,
+                done: '<span class="s-accent">Setup complete! Adjust parameters or click <strong>Evaluate Policy</strong> to run.</span>',
+            };
+            sb.innerHTML = messages[mode] ?? '';
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  GENERATE GRID
+         * ══════════════════════════════════════════════════════════ */
+        function generateGrid() {
+            let val;
+            try {
+                val = safeInt(document.getElementById('nSelect').value,
+                              CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'Grid size');
+            } catch (e) {
+                alert('Invalid grid size: ' + e.message);
+                return;
+            }
+            n = val;
+            resetGrid();
+        }
+
+        function triggerReval() {
+             if(mode === 'done' && !document.getElementById('reEvalRandBtn').disabled){
+                  evaluatePolicy();
+             }
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  RESET
+         * ══════════════════════════════════════════════════════════ */
+        function resetGrid() {
+            startCell = null;
+            endCell = null;
+            obstacles = [];
+            obsCount = 0;
+            mode = 'start';
+            document.getElementById('evalBtn').disabled = true;
+            document.getElementById('reEvalRandBtn').disabled = true;
+            rebuildTable();
+            updateStatus();
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  BUILD TABLE (FOR BOTH GRIDS)
+         * ══════════════════════════════════════════════════════════ */
+        function rebuildTable() {
+            const tRand = document.getElementById('gridTableRand');
+            const tOpt = document.getElementById('gridTableOpt');
+            tRand.innerHTML = '';
+            tOpt.innerHTML = '';
+
+            for (let r = 0; r < n; r++) {
+                const trRand = tRand.insertRow();
+                const trOpt = tOpt.insertRow();
+
+                for (let c = 0; c < n; c++) {
+                    const tdRand = trRand.insertCell();
+                    const tdOpt = trOpt.insertCell();
+
+                    tdRand.style.backgroundColor = '';
+                    tdOpt.style.backgroundColor = '';
+                    
+                    tdRand.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
+                    tdOpt.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
+                    
+                    const clickHandler = () => handleJointClick(r, c, tdRand, tdOpt);
+                    
+                    tdRand.addEventListener('click', clickHandler);
+                    tdOpt.addEventListener('click', clickHandler);
+                }
+            }
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  HANDLE CLICK (SYNCHRONIZED ACROSS BOTH)
+         * ══════════════════════════════════════════════════════════ */
+        function handleJointClick(r, c, tdRand, tdOpt) {
+            if (mode === 'idle' || mode === 'done') return;
+            if (tdRand.classList.contains('start') ||
+                tdRand.classList.contains('end') ||
+                tdRand.classList.contains('obstacle')) return;
+
+            if (mode === 'start') {
+                tdRand.classList.add('start'); tdOpt.classList.add('start');
+                tdRand.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">S</span>';
+                tdOpt.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">S</span>';
+                startCell = { row: r, col: c };
+                mode = 'end';
+
+            } else if (mode === 'end') {
+                tdRand.classList.add('end'); tdOpt.classList.add('end');
+                tdRand.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">G</span>';
+                tdOpt.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">G</span>';
+                endCell = { row: r, col: c };
+                mode = 'obstacle';
+                obsCount = 0;
+
+            } else if (mode === 'obstacle') {
+                tdRand.classList.add('obstacle'); tdOpt.classList.add('obstacle');
+                tdRand.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">✕</span>';
+                tdOpt.querySelector('.cell-arrow').innerHTML = '<span class="cell-label">✕</span>';
+                obstacles.push({ row: r, col: c });
+                obsCount++;
+                if (obsCount >= n - 2) {
+                    mode = 'done';
+                    document.getElementById('evalBtn').disabled = false;
+                }
+            }
+
+            updateStatus();
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  EVALUATE POLICY
+         * ══════════════════════════════════════════════════════════ */
+        async function evaluatePolicy() {
+            const btn = document.getElementById('evalBtn');
+            const isReEval = mode === 'done' && !document.getElementById('reEvalRandBtn').disabled;
+
+            // ── Client-side pre-flight validation ───────────────────────────
+            let noise, gamma, stepCost, safeN;
+            try {
+                safeN     = safeInt  (n,
+                                      CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'n');
+                noise     = safeFloat(document.getElementById('noiseVal').innerText,
+                                      CLIENT_LIMITS.NOISE_MIN,     CLIENT_LIMITS.NOISE_MAX,     'noise');
+                gamma     = safeFloat(document.getElementById('gammaVal').innerText,
+                                      CLIENT_LIMITS.GAMMA_MIN,     CLIENT_LIMITS.GAMMA_MAX,     'gamma');
+                stepCost  = safeFloat(document.getElementById('costVal').innerText,
+                                      CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'step_cost');
+
+                if (!startCell || !endCell) throw new RangeError('Start and End cells must be set.');
+                if (obstacles.length > CLIENT_LIMITS.MAX_OBSTACLES)
+                    throw new RangeError(`Too many obstacles (max ${CLIENT_LIMITS.MAX_OBSTACLES}).`);
+
+                // Ensure cell coordinates are within grid
+                const cellInBounds = ({row, col}) => row >= 0 && row < safeN && col >= 0 && col < safeN;
+                if (!cellInBounds(startCell)) throw new RangeError('Start cell is out of bounds.');
+                if (!cellInBounds(endCell))   throw new RangeError('End cell is out of bounds.');
+                for (const obs of obstacles) {
+                    if (!cellInBounds(obs)) throw new RangeError(`Obstacle ${JSON.stringify(obs)} is out of bounds.`);
+                }
+            } catch (e) {
+                alert('Validation error: ' + e.message);
+                return;
+            }
+
+            // Just for visual loading check if the main eval button was clicked
+            if (!isReEval) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span>Evaluating…';
+            }
+
+            try {
+                const res = await fetch('/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        n:         safeN,
+                        start:     startCell,
+                        end:       endCell,
+                        obstacles,
+                        noise,
+                        gamma,
+                        step_cost: stepCost
+                    })
+                });
+
+                if (!res.ok) {
+                    // Surface the server's error message instead of a generic one
+                    let errMsg = `Server error: ${res.status}`;
+                    try {
+                        const errBody = await res.json();
+                        if (errBody && errBody.error) errMsg = errBody.error;
+                    } catch (_) { /* ignore JSON parse failure */ }
+                    throw new Error(errMsg);
+                }
+
+                const data = await res.json();
+
+                renderResults(data.rand_cells, 'gridTableRand');
+                renderResults(data.opt_cells, 'gridTableOpt');
+
+                btn.innerHTML = 'Evaluate Policy';
+                btn.disabled = true; // Stay disabled after first successful run
+                document.getElementById('reEvalRandBtn').disabled = false;
+
+            } catch (err) {
+                alert('Evaluation failed: ' + err.message);
+                btn.innerHTML = 'Evaluate Policy';
+                btn.disabled = false;
+            }
+        }
+
+        /* ══════════════════════════════════════════════════════════ *
+         *  RENDER RESULTS (SPECIFIC TABLE)
+         * ══════════════════════════════════════════════════════════ */
+        function renderResults(cells, tableId) {
+            const table = document.getElementById(tableId);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            for (let r = 0; r < n; r++) {
+                for (let c = 0; c < n; c++) {
+                    const key = `${r}_${c}`;
+                    const td = table.rows[r].cells[c];
+                    const info = cells[key];
+                    const arrowEl = td.querySelector('.cell-arrow');
+                    const valueEl = td.querySelector('.cell-value');
+
+                    td.classList.add('locked');
+                    td.style.backgroundColor = ''; 
+
+                    if (info.type === 'obstacle') {
+                        arrowEl.innerHTML = '<span class="cell-label">✕</span>';
+                        valueEl.textContent = '';
+                    } else if (info.type === 'end') {
+                        arrowEl.innerHTML = '<span class="cell-label">G</span>';
+                        valueEl.textContent = 'V = 1.000';
+                    } else {
+                        const isStart = info.type === 'start';
+                        arrowEl.innerHTML = buildArrowSVG(info.actions, isStart);
+
+                        const v = parseFloat(info.value);
+                        if (!isNaN(v) && v > -1.0) {
+                            // Normalized based on expected lower bounds (e.g. -1 for big negative cost)
+                            // A dynamic normalization based on max/min would be better but this is sufficient for typical range [-0.5, 1.0]
+                            const minV = -0.6;
+                            const maxV = 1.0;
+                            let ratio = (v - minV) / (maxV - minV);
+                            ratio = Math.max(0, Math.min(1, ratio));
+
+                            if (isDark) {
+                                td.style.backgroundColor = `rgba(108, 99, 255, ${ratio * 0.45})`;
+                            } else {
+                                td.style.backgroundColor = `rgba(46, 204, 113, ${ratio * 0.35})`;
+                            }
+                        }
+
+                        valueEl.textContent = `V = ${info.value}`;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
