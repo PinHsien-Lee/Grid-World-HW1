@@ -1,6 +1,6 @@
 # HW1 — Grid World: Iterative Policy Evaluation & Value Iteration
 
-**Live demo link:** https://grid-world.onrender.com/
+**Live demo link:** [https://grid-world.onrender.com/](https://grid-world.onrender.com/)
 
 ## Summary
 This project is a Flask-based interactive Grid World web application designed to visualize **Iterative Policy Evaluation** and **Value Iteration** in Reinforcement Learning. It features a side-by-side UI to compare a Random Deterministic Policy against an Optimal Policy found via Value Iteration. 
@@ -44,7 +44,7 @@ Interactive sliders are provided to instantly recalculate and observe agent beha
 - **Discount Factor ($\gamma$):** Controls whether the agent prefers immediate rewards or distant goals.
 - **Step Cost:** Controls the penalty applied for every step taken. A high step cost creates urgency to reach the goal faster.
 
-*(Adjusting any slider instantly recalculates both the Random Policy evaluation and the Value Iteration optimal policy in real-time).*
+*(Adjusting any slider instantly recalculates both the Random Policy evaluation and the Value Iteration optimal policy in real-time. You can also click directly on the parameter values to open a prompt and enter a highly precise number).*
 
 ---
 
@@ -77,3 +77,12 @@ Then open your browser and go to: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 7. Adjust the **Noise**, **Discount Factor ($\gamma$)**, or **Step Cost** sliders to watch how the Optimal Policy actively adapts to high/low risk scenarios instantly without re-clicking evaluate.
 8. Click **Re-evaluate Policy** under the left board to test a new random policy.
 9. Click **Reset** to clear everything and start over.
+
+---
+
+<details>
+<summary><small><i>Security & Validation</i></small></summary>
+<small>
+To ensure application stability, this project implements strict input validation mechanisms across both the client and server. The frontend intercepts out-of-bounds parameters clamping them to safe ranges before submission. Meanwhile, the Flask backend serves as the primary defense against malformed or malicious API requests, strictly enforcing grid constraints, validating coordinates, sanitizing continuous numerical parameters, and gracefully returning HTTP 400 Bad Request responses to prevent unexpected crashes or resource exhaustion.
+</small>
+</details>
