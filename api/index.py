@@ -253,7 +253,6 @@ def evaluate():
 
     opt_cells = build_response(V_opt, opt_policy, n, start, end, obstacles)
 
-<<<<<<< HEAD
     # ── 3. Trace optimal path from start to end ────────────────
     opt_path = []
     visited_path = set()
@@ -281,17 +280,8 @@ def evaluate():
         'rand_cells': rand_cells,
         'opt_cells':  opt_cells,
         'opt_path':   opt_path
-=======
-    return jsonify({
-        'rand_cells': rand_cells,
-        'opt_cells': opt_cells
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
     })
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    app.run(debug=True)
-=======
     app.run(debug=False)
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
