@@ -8,12 +8,8 @@
     <meta name="description" content="Interactive Grid World with Iterative Policy Evaluation visualization" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<<<<<<< HEAD
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
-=======
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
 
     <style>
         /* ═══════════════════ RESET & BASE ═══════════════════ */
@@ -165,12 +161,8 @@
             color: var(--text-dim);
         }
 
-<<<<<<< HEAD
         .panel select,
         .panel input[type="range"] {
-=======
-        .panel select, .panel input[type="range"] {
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             border: 2px solid var(--border);
             border-radius: 8px;
             background: var(--surface2);
@@ -211,11 +203,7 @@
         .range-wrapper span.clickable-val:hover {
             background: var(--border);
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
         .range-wrapper span.clickable-val:active {
             transform: scale(0.95);
         }
@@ -223,14 +211,10 @@
         /* ═══════════ CUSTOM MODAL PROMPT ═══════════ */
         .modal-overlay {
             position: fixed;
-<<<<<<< HEAD
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-=======
-            top: 0; left: 0; right: 0; bottom: 0;
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(2px);
             display: none;
@@ -298,11 +282,7 @@
             gap: 12px;
             justify-content: center;
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
         .modal-btn {
             flex: 1;
             padding: 8px;
@@ -496,7 +476,6 @@
             cursor: default;
         }
 
-<<<<<<< HEAD
         /* ═══════════ OPTIMAL PATH ═══════════ */
         td.on-path {
             background: rgba(46, 204, 113, 0.22) !important;
@@ -513,8 +492,6 @@
             box-shadow: inset 0 0 0 2.5px var(--green);
         }
 
-=======
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
         /* inner content */
         .cell-arrow {
             display: flex;
@@ -590,7 +567,6 @@
                 width: 62px;
                 height: 62px;
             }
-<<<<<<< HEAD
 
             .cell-arrow {
                 height: 34px;
@@ -600,22 +576,11 @@
                 font-size: .55rem;
             }
 
-=======
-            .cell-arrow {
-                height: 34px;
-            }
-            .cell-value {
-                font-size: .55rem;
-            }
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             .panel {
                 padding: 12px 14px;
                 gap: 8px;
             }
-<<<<<<< HEAD
 
-=======
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             .theme-toggle {
                 width: 34px;
                 height: 34px;
@@ -669,7 +634,6 @@
         <label title="Probability of agent sliding into an alternate direction">
             Noise/Slip Probability (Risk):
             <div class="range-wrapper">
-<<<<<<< HEAD
                 <input type="range" id="noiseRange" min="0" max="1.0" step="0.01" value="0.3"
                     oninput="document.getElementById('noiseVal').innerText=this.value; triggerReval();">
                 <span id="noiseVal" class="clickable-val"
@@ -684,36 +648,16 @@
                     oninput="document.getElementById('gammaVal').innerText=this.value; triggerReval();">
                 <span id="gammaVal" class="clickable-val"
                     onclick="promptForValue('gamma', CLIENT_LIMITS.GAMMA_MIN, CLIENT_LIMITS.GAMMA_MAX, 'Discount Factor (γ)')">0.9</span>
-=======
-                <input type="range" id="noiseRange" min="0" max="1.0" step="0.01" value="0.3" 
-                    oninput="document.getElementById('noiseVal').innerText=this.value; triggerReval();">
-                <span id="noiseVal" class="clickable-val" onclick="promptForValue('noise', CLIENT_LIMITS.NOISE_MIN, CLIENT_LIMITS.NOISE_MAX, 'Noise/Slip Probability')">0.3</span>
-            </div>
-        </label>
-        
-        <label title="How heavily future rewards are discounted">
-            Discount Factor (γ):
-            <div class="range-wrapper">
-                <input type="range" id="gammaRange" min="0.1" max="1.0" step="0.01" value="0.9" 
-                    oninput="document.getElementById('gammaVal').innerText=this.value; triggerReval();">
-                <span id="gammaVal" class="clickable-val" onclick="promptForValue('gamma', CLIENT_LIMITS.GAMMA_MIN, CLIENT_LIMITS.GAMMA_MAX, 'Discount Factor (γ)')">0.9</span>
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             </div>
         </label>
 
         <label title="Penalty for taking each step">
             Step Cost:
             <div class="range-wrapper">
-<<<<<<< HEAD
                 <input type="range" id="costRange" min="-1.0" max="0.0" step="0.01" value="-0.04"
                     oninput="document.getElementById('costVal').innerText=this.value; triggerReval();">
                 <span id="costVal" class="clickable-val"
                     onclick="promptForValue('cost', CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'Step Cost')">-0.04</span>
-=======
-                <input type="range" id="costRange" min="-1.0" max="0.0" step="0.01" value="-0.04" 
-                    oninput="document.getElementById('costVal').innerText=this.value; triggerReval();">
-                <span id="costVal" class="clickable-val" onclick="promptForValue('cost', CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'Step Cost')">-0.04</span>
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             </div>
         </label>
     </div>
@@ -739,13 +683,10 @@
             <div class="lbox" style="background:var(--cell-bg)"></div>
             <span>Normal</span>
         </div>
-<<<<<<< HEAD
         <div class="legend-item">
             <div class="lbox" style="background:rgba(46,204,113,0.22);box-shadow:inset 0 0 0 2px #2ecc71"></div>
             <span>Optimal Path (VI)</span>
         </div>
-=======
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
     </div>
 
     <!-- Custom Modal Prompt -->
@@ -763,11 +704,7 @@
 
     <!-- Grids Display Container -->
     <div class="grids-container">
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
         <!-- Random Policy Grid -->
         <div class="grid-section">
             <h2>Random Policy</h2>
@@ -775,12 +712,8 @@
                 <table id="gridTableRand"></table>
             </div>
             <div style="margin-top: 15px;">
-<<<<<<< HEAD
                 <button class="btn btn-accent" id="reEvalRandBtn" disabled onclick="evaluatePolicy()">Re-Evaluate
                     Policy</button>
-=======
-                 <button class="btn btn-accent" id="reEvalRandBtn" disabled onclick="evaluatePolicy()">Re-Evaluate Policy</button>
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             </div>
         </div>
 
@@ -799,7 +732,6 @@
          *  CLIENT-SIDE SECURITY LIMITS  (mirror server constants)
          * ══════════════════════════════════════════════════════════ */
         const CLIENT_LIMITS = Object.freeze({
-<<<<<<< HEAD
             N_MIN: 5,
             N_MAX: 9,
             NOISE_MIN: 0.0,
@@ -808,16 +740,6 @@
             GAMMA_MAX: 1.0,
             STEP_COST_MIN: -1.0,
             STEP_COST_MAX: 0.0,
-=======
-            N_MIN:         5,
-            N_MAX:         9,
-            NOISE_MIN:     0.0,
-            NOISE_MAX:     1.0,
-            GAMMA_MIN:     0.1,
-            GAMMA_MAX:     1.0,
-            STEP_COST_MIN: -1.0,
-            STEP_COST_MAX:  0.0,
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             MAX_OBSTACLES: 81,   // 9*9 absolute cap
         });
 
@@ -857,7 +779,6 @@
             promptTarget = idPrefix;
             promptMin = min;
             promptMax = max;
-<<<<<<< HEAD
 
             const currentVal = document.getElementById(idPrefix + 'Val').innerText;
 
@@ -865,25 +786,12 @@
             document.getElementById('promptDesc').innerText = `Range: [${min} ~ ${max}]`;
             document.getElementById('promptInput').value = currentVal;
 
-=======
-            
-            const currentVal = document.getElementById(idPrefix + 'Val').innerText;
-            
-            document.getElementById('promptTitle').innerText = name;
-            document.getElementById('promptDesc').innerText = `Range: [${min} ~ ${max}]`;
-            document.getElementById('promptInput').value = currentVal;
-            
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             const modal = document.getElementById('customPromptModal');
             modal.style.display = 'flex';
             // Trigger reflow
             void modal.offsetWidth;
             modal.classList.add('active');
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             document.getElementById('promptInput').focus();
             document.getElementById('promptInput').select();
         }
@@ -905,11 +813,7 @@
                     }
                     // clamp it for UI rendering, but still safeFloat will catch at evaluate time
                     const val = Math.max(promptMin, Math.min(promptMax, parsed));
-<<<<<<< HEAD
 
-=======
-                    
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
                     document.getElementById(promptTarget + 'Range').value = val;
                     document.getElementById(promptTarget + 'Val').innerText = val;
                     triggerReval();
@@ -921,11 +825,7 @@
         }
 
         // Allow pressing Enter to confirm
-<<<<<<< HEAD
         document.getElementById('promptInput').addEventListener('keydown', function (e) {
-=======
-        document.getElementById('promptInput').addEventListener('keydown', function(e) {
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             if (e.key === 'Enter') confirmPrompt();
             if (e.key === 'Escape') closePrompt();
         });
@@ -1010,11 +910,7 @@
             let val;
             try {
                 val = safeInt(document.getElementById('nSelect').value,
-<<<<<<< HEAD
                     CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'Grid size');
-=======
-                              CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'Grid size');
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             } catch (e) {
                 alert('Invalid grid size: ' + e.message);
                 return;
@@ -1024,15 +920,9 @@
         }
 
         function triggerReval() {
-<<<<<<< HEAD
             if (mode === 'done' && !document.getElementById('reEvalRandBtn').disabled) {
                 evaluatePolicy();
             }
-=======
-             if(mode === 'done' && !document.getElementById('reEvalRandBtn').disabled){
-                  evaluatePolicy();
-             }
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
         }
 
         /* ══════════════════════════════════════════════════════════ *
@@ -1069,21 +959,12 @@
 
                     tdRand.style.backgroundColor = '';
                     tdOpt.style.backgroundColor = '';
-<<<<<<< HEAD
 
                     tdRand.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
                     tdOpt.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
 
                     const clickHandler = () => handleJointClick(r, c, tdRand, tdOpt);
 
-=======
-                    
-                    tdRand.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
-                    tdOpt.innerHTML = '<div class="cell-arrow"></div><div class="cell-value"></div>';
-                    
-                    const clickHandler = () => handleJointClick(r, c, tdRand, tdOpt);
-                    
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
                     tdRand.addEventListener('click', clickHandler);
                     tdOpt.addEventListener('click', clickHandler);
                 }
@@ -1139,7 +1020,6 @@
             // ── Client-side pre-flight validation ───────────────────────────
             let noise, gamma, stepCost, safeN;
             try {
-<<<<<<< HEAD
                 safeN = safeInt(n,
                     CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'n');
                 noise = safeFloat(document.getElementById('noiseVal').innerText,
@@ -1148,31 +1028,15 @@
                     CLIENT_LIMITS.GAMMA_MIN, CLIENT_LIMITS.GAMMA_MAX, 'gamma');
                 stepCost = safeFloat(document.getElementById('costVal').innerText,
                     CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'step_cost');
-=======
-                safeN     = safeInt  (n,
-                                      CLIENT_LIMITS.N_MIN, CLIENT_LIMITS.N_MAX, 'n');
-                noise     = safeFloat(document.getElementById('noiseVal').innerText,
-                                      CLIENT_LIMITS.NOISE_MIN,     CLIENT_LIMITS.NOISE_MAX,     'noise');
-                gamma     = safeFloat(document.getElementById('gammaVal').innerText,
-                                      CLIENT_LIMITS.GAMMA_MIN,     CLIENT_LIMITS.GAMMA_MAX,     'gamma');
-                stepCost  = safeFloat(document.getElementById('costVal').innerText,
-                                      CLIENT_LIMITS.STEP_COST_MIN, CLIENT_LIMITS.STEP_COST_MAX, 'step_cost');
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
 
                 if (!startCell || !endCell) throw new RangeError('Start and End cells must be set.');
                 if (obstacles.length > CLIENT_LIMITS.MAX_OBSTACLES)
                     throw new RangeError(`Too many obstacles (max ${CLIENT_LIMITS.MAX_OBSTACLES}).`);
 
                 // Ensure cell coordinates are within grid
-<<<<<<< HEAD
                 const cellInBounds = ({ row, col }) => row >= 0 && row < safeN && col >= 0 && col < safeN;
                 if (!cellInBounds(startCell)) throw new RangeError('Start cell is out of bounds.');
                 if (!cellInBounds(endCell)) throw new RangeError('End cell is out of bounds.');
-=======
-                const cellInBounds = ({row, col}) => row >= 0 && row < safeN && col >= 0 && col < safeN;
-                if (!cellInBounds(startCell)) throw new RangeError('Start cell is out of bounds.');
-                if (!cellInBounds(endCell))   throw new RangeError('End cell is out of bounds.');
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
                 for (const obs of obstacles) {
                     if (!cellInBounds(obs)) throw new RangeError(`Obstacle ${JSON.stringify(obs)} is out of bounds.`);
                 }
@@ -1192,15 +1056,9 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-<<<<<<< HEAD
                         n: safeN,
                         start: startCell,
                         end: endCell,
-=======
-                        n:         safeN,
-                        start:     startCell,
-                        end:       endCell,
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
                         obstacles,
                         noise,
                         gamma,
@@ -1220,16 +1078,11 @@
 
                 const data = await res.json();
 
-<<<<<<< HEAD
                 // Clear stale path highlights before re-render
                 document.querySelectorAll('#gridTableOpt td.on-path').forEach(td => td.classList.remove('on-path'));
 
                 renderResults(data.rand_cells, 'gridTableRand', []);
                 renderResults(data.opt_cells, 'gridTableOpt', data.opt_path || []);
-=======
-                renderResults(data.rand_cells, 'gridTableRand');
-                renderResults(data.opt_cells, 'gridTableOpt');
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
 
                 btn.innerHTML = 'Evaluate Policy';
                 btn.disabled = true; // Stay disabled after first successful run
@@ -1245,7 +1098,6 @@
         /* ══════════════════════════════════════════════════════════ *
          *  RENDER RESULTS (SPECIFIC TABLE)
          * ══════════════════════════════════════════════════════════ */
-<<<<<<< HEAD
         function renderResults(cells, tableId, pathList) {
             const table = document.getElementById(tableId);
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -1253,12 +1105,6 @@
             // Build a fast lookup set for path cells
             const pathSet = new Set((pathList || []).map(p => `${p.row}_${p.col}`));
 
-=======
-        function renderResults(cells, tableId) {
-            const table = document.getElementById(tableId);
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
             for (let r = 0; r < n; r++) {
                 for (let c = 0; c < n; c++) {
                     const key = `${r}_${c}`;
@@ -1268,11 +1114,7 @@
                     const valueEl = td.querySelector('.cell-value');
 
                     td.classList.add('locked');
-<<<<<<< HEAD
                     td.style.backgroundColor = '';
-=======
-                    td.style.backgroundColor = ''; 
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
 
                     if (info.type === 'obstacle') {
                         arrowEl.innerHTML = '<span class="cell-label">✕</span>';
@@ -1280,7 +1122,6 @@
                     } else if (info.type === 'end') {
                         arrowEl.innerHTML = '<span class="cell-label">G</span>';
                         valueEl.textContent = 'V = 1.000';
-<<<<<<< HEAD
                         if (pathSet.has(key)) {
                             td.classList.add('on-path');
                         }
@@ -1298,16 +1139,6 @@
 
                         const v = parseFloat(info.value);
                         if (!isNaN(v) && v > -1.0 && !onPath) {
-=======
-                    } else {
-                        const isStart = info.type === 'start';
-                        arrowEl.innerHTML = buildArrowSVG(info.actions, isStart);
-
-                        const v = parseFloat(info.value);
-                        if (!isNaN(v) && v > -1.0) {
-                            // Normalized based on expected lower bounds (e.g. -1 for big negative cost)
-                            // A dynamic normalization based on max/min would be better but this is sufficient for typical range [-0.5, 1.0]
->>>>>>> e9945f50542ee0e20a756f144c6f945ed101560f
                             const minV = -0.6;
                             const maxV = 1.0;
                             let ratio = (v - minV) / (maxV - minV);
