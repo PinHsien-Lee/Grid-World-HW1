@@ -2,6 +2,8 @@
 
 [**Live demo link**](https://grid-world-three.vercel.app/)
 
+![Application Screenshot](screenshot.png)
+
 ## Summary
 This project is a Flask-based interactive Grid World web application designed to visualize **Iterative Policy Evaluation** and **Value Iteration** in Reinforcement Learning. It features a side-by-side UI to compare a Random Deterministic Policy against an Optimal Policy found via Value Iteration. 
 
